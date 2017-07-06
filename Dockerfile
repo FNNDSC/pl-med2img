@@ -9,6 +9,8 @@ COPY ["requirements.txt", "${APPROOT}"]
 
 WORKDIR $APPROOT
 
-RUN pip install -r requirements.txt
+RUN apt-get update \
+  && apt-get install -y python3-tk \
+  && pip install -r requirements.txt
 
 CMD ["med2img.py", "--json"]
