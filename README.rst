@@ -28,7 +28,7 @@ Assign an "input" directory to ``/incoming`` and an output directory to ``/outgo
         -v $(pwd)/out:/incoming                                         \
         -v $(pwd)/out2:/outgoing                                        \
         fnndsc/pl-med2img                                                \
-        med2img.py --bucket bch-fnndsc --prefix test /incoming /outgoing
+        med2img.py /incoming /outgoing
 
 The above will push a copy of each file/folder in the container's ``/incoming``
 storage and prefix the copy with the ``prefix`` text (in this case "test"). Some
