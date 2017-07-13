@@ -32,12 +32,12 @@ class Med2ImgApp(ChrisApp):
     VERSION         = '0.1'
 
     def define_parameters(self):
-        self.add_parameter('--outputFileType', action='store', dest='outputFileType',
-                           type=str, default='jpg', optional=True,
-                           help='output image file format')
-        self.add_parameter('--sliceToConvert', action='store', dest='sliceToConvert',
-                           type=int, default=-1, optional=True,
-                           help='slice to convert (for 3D data)')
+        self.add_argument('--outputFileType', dest='outputFileType', type=str,
+                          default='jpg', optional=True, help='output image file format')
+        self.add_argument('--sliceToConvert', dest='sliceToConvert', type=int,
+                          default=-1, optional=True, help='slice to convert (for 3D data)')
+        self.add_argument('--func', dest='func', type=str, default='', optional=True,
+                          help='apply the specified transformation function before saving')
 
     def run(self, options):
         for (dirpath, dirnames, filenames) in os.walk(options.inputdir):
@@ -64,7 +64,6 @@ class Med2ImgApp(ChrisApp):
                             showSlices=False,
                             reslice=False
                         )
-                        C_convert.run()
 
                     if b_dicomExt:
                         C_convert = med2image.med2image_dcm(
@@ -75,7 +74,12 @@ class Med2ImgApp(ChrisApp):
                             sliceToConvert=str(options.sliceToConvert),
                             reslice=False
                         )
-                        C_convert.run()
+
+                    if options.func:
+                        C_convert.func = options.func
+                    C_convert.run()
+
+                    if b_dicomExt:
                         break
                 except Exception as e:
                     print(e)
