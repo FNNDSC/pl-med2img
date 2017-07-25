@@ -1,2 +1,2 @@
 chrisapp==1.0.0
-med2image==1.0.4
+med2image==1.1.1
