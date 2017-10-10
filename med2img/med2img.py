@@ -31,7 +31,15 @@ class Med2ImgApp(ChrisApp):
     LICENSE         = 'Opensource (MIT)'
     VERSION         = '0.1'
 
+    # Fill out this with key-value output descriptive info (such as an output file path
+    # relative to the output dir) that you want to save to the output meta file when
+    # called with the --saveoutputmeta flag
+    OUTPUT_META_DICT = {}
+
     def define_parameters(self):
+        """
+        Define the CLI arguments accepted by this plugin app.
+        """
         self.add_argument('--outputFileType', dest='outputFileType', type=str,
                           default='jpg', optional=True, help='output image file format')
         self.add_argument('--sliceToConvert', dest='sliceToConvert', type=int,
@@ -40,6 +48,9 @@ class Med2ImgApp(ChrisApp):
                           help='apply the specified transformation function before saving')
 
     def run(self, options):
+        """
+        Define the code to be run by this plugin app.
+        """
         for (dirpath, dirnames, filenames) in os.walk(options.inputdir):
             output_path = dirpath.replace(options.inputdir, options.outputdir).rstrip('/')
             for dirname in dirnames:
