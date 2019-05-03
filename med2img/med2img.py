@@ -29,7 +29,7 @@ class Med2ImgApp(ChrisApp):
     DESCRIPTION     = 'An app to convert from medical image data files to png, jpg, etc ...'
     DOCUMENTATION   = 'http://wiki'
     LICENSE         = 'Opensource (MIT)'
-    VERSION         = '0.1'
+    VERSION         = '0.1.1'
     MAX_NUMBER_OF_WORKERS = 1  # Override with integer value
     MIN_NUMBER_OF_WORKERS = 1  # Override with integer value
     MAX_CPU_LIMIT = ''  # Override with millicore value as string, e.g. '2000m'
