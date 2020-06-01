@@ -93,6 +93,154 @@ class Med2ImgApp(ChrisApp):
         # self.add_argument('--version', dest='b_version', type=bool, action='store_true',
         #                   default=False, optional=True, help='if specified, print version number')
 
+    def show_man_page(self, ab_shortOnly=False):
+        scriptName = os.path.basename(sys.argv[0])
+        shortSynopsis = '''
+        NAME
+
+    	    med2image.py - convert medical images to jpg/png/etc.
+
+        SYNOPSIS
+
+                %s                                       \\
+                         -i|--input <inputFile>                 \\
+                        [-d|--outputDir <outputDir>]            \\
+                         -o|--output <outputFileStem>           \\
+                        [-t|--outputFileType <outputFileType>]  \\
+                        [-s|--sliceToConvert <sliceToConvert>]  \\
+                        [-f|--frameToConvert <frameToConvert>]  \\
+                        [--showSlices]                          \\
+                        [--func <functionName>]                 \\
+                        [--reslice]                             \\
+                        [-x|--man]                              \\
+                        [-y|--synopsis]
+
+        BRIEF EXAMPLE
+
+    	    med2image.py -i slice.dcm -o slice.jpg
+
+        ''' % scriptName
+
+        description = '''
+        DESCRIPTION
+
+            `%s' converts input medical image formatted data to a more
+            display friendly format, such as jpg or png.
+
+            Currently understands NIfTI and DICOM input formats.
+
+        ARGS
+
+            -i|--inputFile <inputFile>
+            Input file to convert. Typically a DICOM file or a nifti volume.
+
+            [-d|--outputDir <outputDir>]
+            The directory to contain the converted output image files.
+
+            -o|--outputFileStem <outputFileStem>
+            The output file stem to store conversion. If this is specified
+            with an extension, this extension will be used to specify the
+            output file type.
+
+            SPECIAL CASES:
+            For DICOM data, the <outputFileStem> can be set to the value of
+            an internal DICOM tag. The tag is specified by preceding the tag
+            name with a percent character '%%', so 
+
+                -o %%ProtocolName
+
+            will use the DICOM 'ProtocolName' to name the output file. Note
+            that special characters (like spaces) in the DICOM value are 
+            replaced by underscores '_'.
+
+            Multiple tags can be specified, for example
+
+                -o %%PatientName%%PatientID%%ProtocolName
+
+            and the output filename will have each DICOM tag string as 
+            specified in order, connected with dashes.
+
+            A special %%inputFile is available to specify the input file that
+            was read (without extension).
+
+            [-t|--outputFileType <outputFileType>]
+            The output file type. If different to <outputFileStem> extension,
+            will override extension in favour of <outputFileType>.
+
+            [-s|--sliceToConvert <sliceToConvert>]
+            In the case of volume files, the slice (z) index to convert. Ignored
+            for 2D input data. If a '-1' is sent, then convert *all* the slices.
+            If an 'm' is specified, only convert the middle slice in an input
+            volume.
+
+            [-f|--frameToConvert <sliceToConvert>]
+            In the case of 4D volume files, the volume (V) containing the
+            slice (z) index to convert. Ignored for 3D input data. If a '-1' is
+            sent, then convert *all* the frames. If an 'm' is specified, only
+            convert the middle frame in the 4D input stack.
+
+            [--showSlices]
+            If specified, render/show image slices as they are created.
+
+            [--func <functionName>]
+            Apply the specified transformation function before saving. Currently 
+            support functions:
+
+                * invertIntensities
+                  Inverts the contrast intensity of the source image.
+
+            [--reslice]
+            For 3D data only. Assuming [i,j,k] coordinates, the default is to save
+            along the 'k' direction. By passing a --reslice image data in the 'i' and
+            'j' directions are also saved. Furthermore, the <outputDir> is subdivided into
+            'slice' (k), 'row' (i), and 'col' (j) subdirectories.
+
+            [-x|--man]
+            Show full help.
+
+            [-y|--synopsis]
+            Show brief help.
+
+        EXAMPLES
+
+        NIfTI
+
+        o Convert each slice in a NIfTI volume 'vol.nii' to a jpg called
+          'image-sliceXXX.jpg' and store results in a directory called 'out':
+
+        		med2image -i vol.nii -d out -o image.jpg -s -1
+
+        o Convert only the middle slice in an input volume and store in current
+          directory:
+
+        		med2image -i vol.nii -o image.jpg -s m
+
+        o Convert a specific slice, i.e. slice 20
+
+        		med2image -i vol.nii -o image.jpg -s 20
+
+        DICOM
+
+        o Simply convert a DICOM file called 'slice.dcm' to a jpg called 'slice.jpg':
+
+        		med2image -i slice.dcm -o slice.jpg
+
+        o Convert all DICOMs in a directory. Note that is assumes all DICOM files
+          in the directory containing the passed file belong to the same series.
+          Conversion will fail if multiple series are interspersed in the same dir.
+
+                med2image -i slice.dcm -o slice.jpg -s -1
+
+        GITHUB
+
+            o See https://github.com/FNNDSC/med2image for more help and source.
+
+
+        ''' % (scriptName)
+        if ab_shortOnly:
+            return shortSynopsis
+        else:
+            return shortSynopsis + description
 
     def run(self, options):
         """
@@ -111,11 +259,10 @@ class Med2ImgApp(ChrisApp):
                 sys.exit(1)
 
             if options.man or options.synopsis:
-                print(options.synopsis)
                 if options.man:
-                    str_help = synopsis(False)
+                    str_help = self.show_man_page(False)
                 else:
-                    str_help = synopsis(True)
+                    str_help = self.show_man_page(True)
                 print(str_help)
                 sys.exit(1)
 

@@ -4,6 +4,7 @@ FROM fnndsc/ubuntu-python3:latest
 MAINTAINER fnndsc "dev@babymri.org"
 
 ENV APPROOT="/usr/src/med2img"
+ENV DEBIAN_FRONTEND=noninteractive VERSION="0.1"
 COPY ["med2img", "${APPROOT}"]
 COPY ["requirements.txt", "${APPROOT}"]
 
