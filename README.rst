@@ -7,7 +7,16 @@ Abstract
 ========
 
 A Chris 'ds' plugin to convert from medical image data files to display-friendly formats
-(like png and jpg).
+(like png and jpg). 
+
+This plug-in is a wrap around the ``med2image`` application which converts ``NIfTI`` volumes or ``DICOM`` files to ``png`` or ``jpg`` formats
+
+You can go through more details to understand the various Command Line Arguments of the ``med2image`` application using the following link:
+
+::
+
+    https://github.com/FNNDSC/med2image
+
 
 Preconditions
 =============
@@ -61,16 +70,6 @@ Clone the git repository ``FNNDSC/pl-med2img`` in the current working directory 
 ::
 
     git clone https://github.com/FNNDSC/pl-med2img.git
-
-**NOTE:**
-
-- This plug-in is a wrap around the ``med2image`` application.
-
-- You can go through more details to understand the various Command Line Arguments of the ``med2image`` application using the following link:
-
-::
-
-    https://github.com/FNNDSC/med2image
 
 
 Using python `.py` file
