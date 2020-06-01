@@ -89,9 +89,9 @@ Run the ``med2img.py`` file using the following command to convert the NIfTI vol
 
 ::
 
-    python3 pl-med2img/med2img/med2img.py               \
-    /SAG-anon-nii/ /image-results-nii/   \
-    -i SAG-anon.nii                          \
+    python3 pl-med2img/med2img/med2img.py           \
+    /SAG-anon-nii/ /image-results-nii/              \
+    -i SAG-anon.nii                                 \
     -o sample.png
 
 **DICOM files:**
@@ -102,9 +102,9 @@ Run the ``med2img.py`` file using the following command to convert the DICOM fil
 
 ::
 
-    python3 pl-med2img/med2img/med2img.py               \
-    /SAG-anon/ /image-results-dcm/   \
-    -i 0001-1.3.12.2.1107.5.2.19.45152.2013030808110258929186035.dcm                          \
+    python3 pl-med2img/med2img/med2img.py                            \
+    /SAG-anon/ /image-results-dcm/                                   \ 
+    -i 0001-1.3.12.2.1107.5.2.19.45152.2013030808110258929186035.dcm \
     -o sample.png
 
 Using ``docker run``
