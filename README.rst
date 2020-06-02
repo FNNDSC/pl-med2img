@@ -63,7 +63,10 @@ Run
 
 **NOTE:** Make sure that the 3 directories: ``pl-med2img``, ``SAG-anon-nii``, and ``SAG-anon`` are all within the same directory.
 
-This plugin can be run in two modes: natively as a python package or as a containerized docker image.
+This plugin can be run in two modes: 
+
+1. Natively as a python package
+2. As a containerized docker image.
 
 Clone the git repository ``FNNDSC/pl-med2img`` in the current working directory (which also contains ``SAG-anon-nii`` and ``SAG-anon``) using the following command
 
