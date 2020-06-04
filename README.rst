@@ -113,11 +113,11 @@ Using ``docker run``
 ^^^^^^^^^^^^^^^^^^^^
 **NOTE:** Make sure that your current working directory is the one that contains the 3 directories: ``pl-med2img``, ``SAG-anon-nii``, and ``SAG-anon``
 
-First, build a docker image using the following command:
+First, pull the docker image using the following command:
 
 ::
 
-    docker build -t fnndsc/pl-med2img .
+    docker pull fnndsc/pl-med2img .
 
 Now, to run the docker image, see the following examples:
 
