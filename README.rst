@@ -6,8 +6,7 @@ pl-med2img
 Abstract
 ========
 
-A ChRIS ``DS`` plugin to convert from medical image data files to display-friendly formats
-(like png and jpg). 
+A ChRIS ``DS`` plugin to convert from medical image data files to display-friendly formats (like `png` and `jpg`). 
 
 This plug-in is a wrap around the ``med2image`` application which converts ``NIfTI`` volumes or ``DICOM`` files to ``png`` or ``jpg`` formats
 
