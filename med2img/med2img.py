@@ -92,7 +92,7 @@ class Med2ImgApp(ChrisApp):
         shortSynopsis = '''
         NAME
 
-    	    med2image.py - convert medical images to jpg/png/etc.
+    	    pl-med2img - convert medical images to jpg/png/etc.
 
         SYNOPSIS
 
@@ -109,10 +109,7 @@ class Med2ImgApp(ChrisApp):
                         [-x|--man]                              \\
                         [-y|--synopsis]
 
-        BRIEF EXAMPLE
-
-    	    med2image.py -i slice.dcm -o slice.jpg
-
+        
         ''' % scriptName
 
         description = '''
@@ -195,63 +192,115 @@ class Med2ImgApp(ChrisApp):
             [-y|--synopsis]
             Show brief help.
 
+
+        Pull NIfTI
+
+        The input should be a NIfTI volume with extension .nii.
+
+        We provide a sample volume here https://github.com/FNNDSC/SAG-anon-nii.git
+
+        Clone this repository (SAG-anon-nii) to your local computer.
+
+            git clone https://github.com/FNNDSC/SAG-anon-nii.git
+
+        Pull DICOM
+
+        The input should be a DICOM file usually with extension .dcm
+
+        We provide a sample directory of .dcm images here. (https://github.com/FNNDSC/SAG-anon.git)
+
+        Clone this repository (SAG-anon) to your local computer.
+
+            git clone https://github.com/FNNDSC/SAG-anon.git
+
+        HOW TO RUN:
+
+        NOTE: Make sure that the 3 directories: pl-med2img, SAG-anon-nii, and SAG-anon are all within the same directory.
+
+            This plugin can be run in two modes:
+
+                1. Natively as a python package
+                2. As a containerized docker image.
+
+        Clone the git repository FNNDSC/pl-med2img in the current working directory (which also contains SAG-anon-nii and SAG-anon) using the following command
+
+        git clone https://github.com/FNNDSC/pl-med2img.git
+
+
+        Clone the git repository FNNDSC/pl-med2img in the current working directory 
+        (which also contains SAG-anon-nii and SAG-anon) using the following command:
+
+                git clone https://github.com/FNNDSC/pl-med2img.git
+
         EXAMPLES
 
-        NIfTI
+        USING PYTHON .py FILE:
+        
+        Make sure that your current working directory 
+        is the one that contains the 3 directories:
+         pl-med2img, SAG-anon-nii, and SAG-anon
 
-        o Clone the repository "SAG-anon-nii" using "git clone https://github.com/FNNDSC/SAG-anon-nii.git"
+        NIFTI volume:
 
-        o Convert each slice in the NIfTI volume 'SAG-anon.nii' to a jpg called
-          'image-sliceXXX.jpg' and store results in a directory called 'out':
+        Create a directory called image-results-nii in the current working directory.
 
-        		med2image --inputFile SAG-anon-nii/SAG-anon.nii         \
-                          --outputDir nifti-results/all-slices          \
-                          --outputFileStem image  --outputFileType jpg  \
-                          --sliceToConvert -1
+        Run the med2img.py file using the following command to convert the NIfTI volume within the SAG-anon-nii directory to images:
 
-        o Convert only the middle slice in an input volume and store in current
-          directory:
-
-        		med2image -i SAG-anon-nii/SAG-anon.nii    \
-                          -d nifti-results/middle-slice   \
-                          -o sample --outputFileType jpg  \
-                          --sliceToConvert m
-
-        o Convert a specific slice, i.e. slice 20
-
-        		med2image -i SAG-anon-nii/SAG-anon.nii    \
-                          -d nifti-results/specific-slice \
-                          -o sample                       \
-                          --outputFileType jpg            \
-                          --sliceToConvert 20
-
-        DICOM
-
-        o Clone the repository "SAG-anon" using "git clone https://github.com/FNNDSC/SAG-anon.git"
-
-        o Simply convert a DICOM file within "SAG-anon" to a jpg called 'slice.jpg':
-
-        		med2image -i SAG-anon/0001-1.3.12.2.1107.5.2.19.45152.2013030808110258929186035.dcm    \
-                        -d dicom-results/middle-slice  \
-                        -o sample --outputFileType jpg \
-                        --sliceToConvert m
-
-        o Convert all DICOMs in a directory. Note that is assumes all DICOM files
-          in the directory containing the passed file belong to the same series.
-          Conversion will fail if multiple series are interspersed in the same dir.
-
-                med2image -i SAG-anon/0001-1.3.12.2.1107.5.2.19.45152.2013030808110258929186035.dcm   \
-                        -d dicom-results/all-slices      \
-                        -o sample                        \
-                        --outputFileType jpg             \
-                        --sliceToConvert -1
-
-        GITHUB
-
-            o See https://github.com/FNNDSC/med2image for more help and source.
+        python3 pl-med2img/med2img/med2img.py           \
+            /SAG-anon-nii/ /image-results-nii/              \
+            -i SAG-anon.nii                                 \
+            -o sample.png
 
 
-        ''' % (scriptName)
+        DICOM files:
+
+        Create a directory called image-results-dcm in the current working directory.
+
+        Run the med2img.py file using the following command to convert the DICOM files within the SAG-anon directory to images:
+
+        python3 pl-med2img/med2img/med2img.py                            \
+            /SAG-anon/ /image-results-dcm/                                   \
+            -i 0001-1.3.12.2.1107.5.2.19.45152.2013030808110258929186035.dcm \
+            -o sample.png
+
+
+        USING DOCKER RUN:
+
+        NOTE: Make sure that your current working directory is the one that contains the 3 directories: pl-med2img, SAG-anon-nii, and SAG-anon
+
+        First, pull the docker image using the following command:
+
+            "docker pull fnndsc/pl-med2img ."
+
+        Now, to run the docker image, see the following examples:
+
+        NIFTI volume:
+
+        Run the docker image fnndsc/pl-med2img using the following command to convert the NIfTI files within the SAG-anon-nii directory to images:
+
+        docker run --rm                                         \
+            -v $(pwd)/SAG-anon-nii/:/incoming                   \
+            -v $(pwd)/image-results-nii/:/outgoing              \
+            fnndsc/pl-med2img med2img.py                        \
+            -i SAG-anon.nii                                     \
+            -o sample.png                                       \
+            /incoming /outgoing
+
+
+        DICOM files:
+
+        Run the docker image fnndsc/pl-med2img using the following command to convert the DICOM files within the SAG-anon directory to images:
+
+        docker run --rm                                                        \
+            -v $(pwd)/SAG-anon/:/incoming                                      \
+            -v $(pwd)/image-results-dcm/:/outgoing                             \
+            fnndsc/pl-med2img med2img.py                                       \
+            -i 0001-1.3.12.2.1107.5.2.19.45152.2013030808110258929186035.dcm   \
+            -o sample.png                                                      \
+            /incoming /outgoing
+
+                ''' % (scriptName)
+                
         if ab_shortOnly:
             return shortSynopsis
         else:
