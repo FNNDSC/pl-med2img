@@ -54,12 +54,6 @@ class Med2ImgApp(ChrisApp):
         self.add_argument('-i', '--inputFile', dest='inputFile', type=str,
                           optional=False, help='name of the input file within the inputDir')
 
-        # self.add_argument('-d', dest='outputDir', type=str, optional=False,
-        #                   help='output image Directory', default='') #default?
-        #
-        # self.add_argument('-I', '--inputDir', dest='inputDir', type=str,
-        #                   optional=False, help='input Directory', default='')
-
         self.add_argument('-o', '--outputFileStem', dest='outputFileStem', type=str, optional=True,
                           help='output file', default='sample')
 
@@ -205,31 +199,52 @@ class Med2ImgApp(ChrisApp):
 
         NIfTI
 
-        o Convert each slice in a NIfTI volume 'vol.nii' to a jpg called
+        o Clone the repository "SAG-anon-nii" using "git clone https://github.com/FNNDSC/SAG-anon-nii.git"
+
+        o Convert each slice in the NIfTI volume 'SAG-anon.nii' to a jpg called
           'image-sliceXXX.jpg' and store results in a directory called 'out':
 
-        		med2image -i vol.nii -d out -o image.jpg -s -1
+        		med2image --inputFile SAG-anon-nii/SAG-anon.nii         \
+                          --outputDir nifti-results/all-slices          \
+                          --outputFileStem image  --outputFileType jpg  \
+                          --sliceToConvert -1
 
         o Convert only the middle slice in an input volume and store in current
           directory:
 
-        		med2image -i vol.nii -o image.jpg -s m
+        		med2image -i SAG-anon-nii/SAG-anon.nii    \
+                          -d nifti-results/middle-slice   \
+                          -o sample --outputFileType jpg  \
+                          --sliceToConvert m
 
         o Convert a specific slice, i.e. slice 20
 
-        		med2image -i vol.nii -o image.jpg -s 20
+        		med2image -i SAG-anon-nii/SAG-anon.nii    \
+                          -d nifti-results/specific-slice \
+                          -o sample                       \
+                          --outputFileType jpg            \
+                          --sliceToConvert 20
 
         DICOM
 
-        o Simply convert a DICOM file called 'slice.dcm' to a jpg called 'slice.jpg':
+        o Clone the repository "SAG-anon" using "git clone https://github.com/FNNDSC/SAG-anon.git"
 
-        		med2image -i slice.dcm -o slice.jpg
+        o Simply convert a DICOM file within "SAG-anon" to a jpg called 'slice.jpg':
+
+        		med2image -i SAG-anon/0001-1.3.12.2.1107.5.2.19.45152.2013030808110258929186035.dcm    \
+                        -d dicom-results/middle-slice  \
+                        -o sample --outputFileType jpg \
+                        --sliceToConvert m
 
         o Convert all DICOMs in a directory. Note that is assumes all DICOM files
           in the directory containing the passed file belong to the same series.
           Conversion will fail if multiple series are interspersed in the same dir.
 
-                med2image -i slice.dcm -o slice.jpg -s -1
+                med2image -i SAG-anon/0001-1.3.12.2.1107.5.2.19.45152.2013030808110258929186035.dcm   \
+                        -d dicom-results/all-slices      \
+                        -o sample                        \
+                        --outputFileType jpg             \
+                        --sliceToConvert -1
 
         GITHUB
 
