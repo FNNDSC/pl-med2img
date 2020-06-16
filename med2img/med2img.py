@@ -270,7 +270,7 @@ class Med2ImgApp(ChrisApp):
 
         First, pull the docker image using the following command:
 
-            "docker pull fnndsc/pl-med2img ."
+            "docker pull fnndsc/pl-med2img"
 
         Now, to run the docker image, see the following examples:
 
