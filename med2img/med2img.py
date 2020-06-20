@@ -66,7 +66,7 @@ class Med2ImgApp(ChrisApp):
         self.add_argument('-f', '--frameToConvert', dest='frameToConvert', type=str,
                           default="-1", optional=True, help='frame to convert (for 4D data)')
 
-        self.add_argument('--printElapsedTime', dest='printElapsedTime', type=str, action='store_true',
+        self.add_argument('--printElapsedTime', dest='printElapsedTime', type=bool, action='store_true',
                           default=False, optional=True, help='print program run time')
 
         self.add_argument('-r', '--reslice', dest='reslice', type=bool, action='store_true',
