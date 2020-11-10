@@ -58,7 +58,7 @@ class Med2ImgApp(ChrisApp):
                           help='output file', default='sample')
 
         self.add_argument('-t', '--outputFileType', dest='outputFileType', type=str,
-                          default='jpg', optional=True, help='output image file format')
+                          default='', optional=True, help='output image file format')
 
         self.add_argument('-s', '--sliceToConvert', dest='sliceToConvert', type=str,
                           default="-1", optional=True, help='slice to convert (for 3D data)')
