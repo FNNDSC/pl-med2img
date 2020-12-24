@@ -1,22 +1,24 @@
 #                                                            _
-# S3 Push ds app
 #
-# (c) 2016 Fetal-Neonatal Neuroimaging & Developmental Science Center
-#                   Boston Children's Hospital
+# (c) 2016-2021 Fetal-Neonatal Neuroimaging & Developmental Science Center
+#                    Boston Children's Hospital
 #
-#              http://childrenshospital.org/FNNDSC/
-#                        dev@babyMRI.org
+#               http://childrenshospital.org/FNNDSC/
+#                         dev@babyMRI.org
+#
+#   Thin plugin wrapper about a `med2image` module.
 #
 
-import os
+import  os
+
+import  sys
+import  traceback
+import  pudb
+from    pydoc           import synopsis
 
 # import the Chris app superclass
-import sys
-import traceback
-from pydoc import synopsis
-
-from chrisapp.base import ChrisApp
-from med2image import med2image
+from    chrisapp.base   import ChrisApp
+from    med2image       import med2image
 
 class Med2ImgApp(ChrisApp):
     """
@@ -29,10 +31,10 @@ class Med2ImgApp(ChrisApp):
     TITLE           = 'Med2Img'
     CATEGORY        = ''
     TYPE            = 'ds'
-    DESCRIPTION     = 'An app to convert from medical image data files to png, jpg, etc ...'
+    DESCRIPTION     = 'A ChRIS DS app to convert from input medical image data files (NIfTI and DICOM) to png, jpg, etc ...'
     DOCUMENTATION   = 'http://wiki'
     LICENSE         = 'Opensource (MIT)'
-    VERSION         = '0.1.1'
+    VERSION         = '1.0.2'
     MAX_NUMBER_OF_WORKERS = 1  # Override with integer value
     MIN_NUMBER_OF_WORKERS = 1  # Override with integer value
     MAX_CPU_LIMIT = ''  # Override with millicore value as string, e.g. '2000m'
@@ -51,41 +53,94 @@ class Med2ImgApp(ChrisApp):
         """
         Define the CLI arguments accepted by this plugin app.
         """
-        self.add_argument('-i', '--inputFile', dest='inputFile', type=str,
-                          optional=False, help='name of the input file within the inputDir')
-
-        self.add_argument('-o', '--outputFileStem', dest='outputFileStem', type=str, optional=True,
-                          help='output file', default='sample')
-
-        self.add_argument('-t', '--outputFileType', dest='outputFileType', type=str,
-                          default='', optional=True, help='output image file format')
-
-        self.add_argument('-s', '--sliceToConvert', dest='sliceToConvert', type=str,
-                          default="-1", optional=True, help='slice to convert (for 3D data)')
-
-        self.add_argument('-f', '--frameToConvert', dest='frameToConvert', type=str,
-                          default="-1", optional=True, help='frame to convert (for 4D data)')
-
-        self.add_argument('--printElapsedTime', dest='printElapsedTime', type=bool, action='store_true',
-                          default=False, optional=True, help='print program run time')
-
-        self.add_argument('-r', '--reslice', dest='reslice', type=bool, action='store_true',
-                          default=False, optional=True, help='save images along i, j, k direction -- 3D input only')
-
-        self.add_argument('--showSlices', dest='showSlices', type=bool, action='store_true',
-                          default=False, optional=True, help='show slices that are converted')
-
-        self.add_argument('--func', dest='func', type=str, default='', optional=True,
-                          help='apply the specified transformation function before saving')
-
-        # self.add_argument('-x', '--man', dest='man', type=bool, action='store_true',
-        #                   default=False, optional=True, help='man')
-
-        self.add_argument('-y', '--synopsis', dest='synopsis', type=bool, action='store_true',
-                          default=False, optional=True, help='short synopsis')
-
-        # self.add_argument('--version', dest='b_version', type=bool, action='store_true',
-        #                   default=False, optional=True, help='if specified, print version number')
+        self.add_argument('-i', '--inputFile',
+                            dest        = 'inputFile',
+                            type        = str,
+                            optional    = True,
+                            help        = 'name of the input file within the inputDir',
+                            default     = ''
+                        )
+        self.add_argument("--inputFileSubStr",
+                            help        = "input file substring to tag a file in the inputDir",
+                            dest        = 'inputFileSubStr',
+                            type        = str,
+                            optional    = True,
+                            default     = '')
+        self.add_argument('-o', '--outputFileStem',
+                            dest        = 'outputFileStem',
+                            type        = str,
+                            optional    = True,
+                            help        = 'output file stem name (with optional extension)',
+                            default     = 'sample'
+                        )
+        self.add_argument('-t', '--outputFileType',
+                            dest        = 'outputFileType',
+                            type        = str,
+                            default     = '',
+                            optional    = True,
+                            help        = 'output image file format'
+                        )
+        self.add_argument('-s', '--sliceToConvert',
+                            dest        = 'sliceToConvert',
+                            type        = str,
+                            default     = "-1",
+                            optional    = True,
+                            help        = 'slice to convert (for 3D data)'
+                        )
+        self.add_argument('-f', '--frameToConvert',
+                            dest        = 'frameToConvert',
+                            type        = str,
+                            default     = "-1",
+                            optional    = True,
+                            help        = 'frame to convert (for 4D data)'
+                        )
+        self.add_argument('--printElapsedTime',
+                            dest        = 'printElapsedTime',
+                            type        = bool,
+                            action      = 'store_true',
+                            default     = False,
+                            optional    = True,
+                            help        = 'print program run time'
+                        )
+        self.add_argument('-r', '--reslice',
+                            dest        = 'reslice',
+                            type        = bool,
+                            action      = 'store_true',
+                            default     = False,
+                            optional    = True,
+                            help        = 'save images along i, j, k direction -- 3D input only'
+                        )
+        self.add_argument('--showSlices',
+                            dest        = 'showSlices',
+                            type        = bool,
+                            action      = 'store_true',
+                            default     = False,
+                            optional    = True,
+                            help        = 'show slices that are converted'
+                        )
+        self.add_argument('--func',
+                            dest        = 'func',
+                            type        = str,
+                            default     = '',
+                            optional    = True,
+                            help        = 'apply the specified transformation function before saving'
+                        )
+        self.add_argument('-y', '--synopsis',
+                            dest        = 'synopsis',
+                            type        = bool,
+                            action      = 'store_true',
+                            default     = False,
+                            optional    = True,
+                            help        = 'short synopsis'
+                        )
+        self.add_argument("--convertOnlySingleDICOM",
+                            help        = "if specified, only convert the specific input DICOM",
+                            dest        = 'convertOnlySingleDICOM',
+                            type        = bool,
+                            optional    = True,
+                            action      = 'store_true',
+                            default     = False
+                        )
 
     def show_man_page(self, ab_shortOnly=False):
         scriptName = os.path.basename(sys.argv[0])
@@ -97,11 +152,13 @@ class Med2ImgApp(ChrisApp):
         SYNOPSIS
 
                 %s                                       \\
-                         -i|--input <inputFile>                 \\
+                        [-i|--input <inputFile>]                \\
+                        [--inputFileSubStr <substr>]            \\
                         [-d|--outputDir <outputDir>]            \\
-                         -o|--output <outputFileStem>           \\
+                        [-o|--outputFileStem <outputFileStem>]  \\
                         [-t|--outputFileType <outputFileType>]  \\
                         [-s|--sliceToConvert <sliceToConvert>]  \\
+                        [--convertOnlySingleDICOM]              \\
                         [-f|--frameToConvert <frameToConvert>]  \\
                         [--showSlices]                          \\
                         [--func <functionName>]                 \\
@@ -109,7 +166,7 @@ class Med2ImgApp(ChrisApp):
                         [-x|--man]                              \\
                         [-y|--synopsis]
 
-        
+
         ''' % scriptName
 
         description = '''
@@ -122,13 +179,27 @@ class Med2ImgApp(ChrisApp):
 
         ARGS
 
-            -i|--inputFile <inputFile>
+            [-i|--inputFile <inputFile>]
             Input file to convert. Typically a DICOM file or a nifti volume.
+
+            [--inputFileSubStr <substr>]
+            As a convenience, the input file can be determined via a substring
+            search of all the files in the <inputDir> using this flag. The first
+            filename hit that contains the <substr> will be assigned the
+            <inputFile>.
+
+            This flag is useful is input names are long and cumbersome, but
+            a short substring search would identify the file. For example, an
+            input file of
+
+               0043-1.3.12.2.1107.5.2.19.45152.2013030808110149471485951.dcm
+
+            can be specified using ``--inputFileSubStr 0043-``
 
             [-d|--outputDir <outputDir>]
             The directory to contain the converted output image files.
 
-            -o|--outputFileStem <outputFileStem>
+            [-o|--outputFileStem <outputFileStem>]
             The output file stem to store conversion. If this is specified
             with an extension, this extension will be used to specify the
             output file type.
@@ -136,23 +207,30 @@ class Med2ImgApp(ChrisApp):
             SPECIAL CASES:
             For DICOM data, the <outputFileStem> can be set to the value of
             an internal DICOM tag. The tag is specified by preceding the tag
-            name with a percent character '%%', so 
+            name with a percent character '%%', so
 
                 -o %%ProtocolName
 
             will use the DICOM 'ProtocolName' to name the output file. Note
-            that special characters (like spaces) in the DICOM value are 
+            that special characters (like spaces) in the DICOM value are
             replaced by underscores '_'.
 
             Multiple tags can be specified, for example
 
                 -o %%PatientName%%PatientID%%ProtocolName
 
-            and the output filename will have each DICOM tag string as 
+            and the output filename will have each DICOM tag string as
             specified in order, connected with dashes.
 
             A special %%inputFile is available to specify the input file that
             was read (without extension).
+
+            [--convertOnlySingleDICOM]
+            If specified, will only convert the single DICOM specified by the
+            '--inputFile' flag. This is useful for the case when an input
+            directory has many DICOMS but you specifially only want to convert
+            the named file. By default the script assumes that multiple DICOMS
+            should be converted en mass otherwise.
 
             [-t|--outputFileType <outputFileType>]
             The output file type. If different to <outputFileStem> extension,
@@ -174,7 +252,7 @@ class Med2ImgApp(ChrisApp):
             If specified, render/show image slices as they are created.
 
             [--func <functionName>]
-            Apply the specified transformation function before saving. Currently 
+            Apply the specified transformation function before saving. Currently
             support functions:
 
                 * invertIntensities
@@ -193,7 +271,7 @@ class Med2ImgApp(ChrisApp):
             Show brief help.
 
                 ''' % (scriptName)
-                
+
         if ab_shortOnly:
             return shortSynopsis
         else:
@@ -204,10 +282,11 @@ class Med2ImgApp(ChrisApp):
         Define the code to be run by this plugin app.
         """
         try:
-            options.inputDir = options.inputdir
-            options.outputDir = options.outputdir
-            options.sliceToConvert = options.sliceToConvert
-            options.frameToConvert = options.frameToConvert
+            # The med2image module has slightly different variable
+            # names for the same concept... convert from the plugin
+            # name to the module name:
+            options.inputDir        = options.inputdir
+            options.outputDir       = options.outputdir
 
             imgConverter = med2image.object_factoryCreate(options).C_convert
 
@@ -228,9 +307,6 @@ class Med2ImgApp(ChrisApp):
 
             imgConverter.tic()
             imgConverter.run()
-
-            # if b_dicomExt:
-            #     break
 
             if options.printElapsedTime:
                 print("Elapsed time = %f seconds" % imgConverter.toc())
