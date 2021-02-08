@@ -1,112 +1,150 @@
+##########
 pl-med2img
-================================
-
-.. image:: https://img.shields.io/docker/v/fnndsc/pl-med2img
-    :target: https://hub.docker.com/r/fnndsc/pl-med2img
-
-.. image:: https://img.shields.io/github/license/fnndsc/pl-med2img
-    :target: https://github.com/FNNDSC/pl-med2img/blob/master/LICENSE
-
-.. image:: https://github.com/FNNDSC/pl-med2img/workflows/ci/badge.svg
-    :target: https://github.com/FNNDSC/pl-med2img/actions
-
-
-.. contents:: Table of Contents
+##########
 
 
 Abstract
---------
+========
 
-An app to ...
-
-
-Description
------------
-
-``med2img`` is a ChRIS-based application that...
+``pl-med2img`` is a ChRIS ``DS`` plugin that converts medical image data files (``DICOM`` and ``NifTI``) to web display-friendly formats (like ``png`` and ``jpg``). This plug-in is a really a simple wrapper around the ``med2image`` application which is the actual workhorse converting ``NIfTI`` volumes or ``DICOM`` files to ``png`` or ``jpg`` formats. To better understand ``med2image`` and its features, please take a look at its repo: https://github.com/FNNDSC/med2image
 
 
-Usage
------
+Preconditions
+=============
 
-.. code::
+This plugin requires input and output directories as a precondition.
 
-    python med2img.py
-        [-h|--help]
-        [--json] [--man] [--meta]
-        [--savejson <DIR>]
-        [-v|--verbosity <level>]
-        [--version]
-        <inputDir> <outputDir>
+How to pull medical image data
+==============================
 
+These medical image data files are in 2 formats:
+- NIfTI
+- DICOM
 
-Arguments
-~~~~~~~~~
+The following steps show how to pull sample files for NIfTI or DICOM files.
 
-.. code::
+Pull NIfTI
+^^^^^^^^^^
 
-    [-h] [--help]
-    If specified, show help message and exit.
-    
-    [--json]
-    If specified, show json representation of app and exit.
-    
-    [--man]
-    If specified, print (this) man page and exit.
+The input should be a NIfTI volume with extension .nii.
 
-    [--meta]
-    If specified, print plugin meta data and exit.
-    
-    [--savejson <DIR>] 
-    If specified, save json representation file to DIR and exit. 
-    
-    [-v <level>] [--verbosity <level>]
-    Verbosity level for app. Not used currently.
-    
-    [--version]
-    If specified, print version number and exit. 
+We provide a sample volume here https://github.com/FNNDSC/SAG-anon-nii.git
 
+- Clone this repository (SAG-anon-nii) to your local computer.
 
-Getting inline help is:
+::
 
-.. code:: bash
+    git clone https://github.com/FNNDSC/SAG-anon-nii.git
 
-    docker run --rm fnndsc/pl-med2img med2img --man
+Pull DICOM
+^^^^^^^^^^
+
+The input should be a DICOM file usually with extension .dcm
+
+We provide a sample directory of .dcm images here. (https://github.com/FNNDSC/SAG-anon.git)
+
+-   Clone this repository (SAG-anon) to your local computer.
+
+::
+
+    git clone https://github.com/FNNDSC/SAG-anon.git
 
 Run
-~~~
+===
 
-You need you need to specify input and output directories using the `-v` flag to `docker run`.
+**NOTE:** Make sure that the 3 directories: ``pl-med2img``, ``SAG-anon-nii``, and ``SAG-anon`` are all within the same directory.
 
+This plugin can be run in two modes: 
 
-.. code:: bash
+1. Natively as a python package
+2. As a containerized docker image.
 
-    docker run --rm -u $(id -u)                             \
-        -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing      \
-        fnndsc/pl-med2img med2img                        \
-        /incoming /outgoing
+Clone the git repository ``FNNDSC/pl-med2img`` in the current working directory (which also contains ``SAG-anon-nii`` and ``SAG-anon``) using the following command
 
+::
 
-Development
------------
-
-Build the Docker container:
-
-.. code:: bash
-
-    docker build -t local/pl-med2img .
-
-Run unit tests:
-
-.. code:: bash
-
-    docker run --rm local/pl-med2img nosetests
-
-Examples
---------
-
-Put some examples here!
+    git clone https://github.com/FNNDSC/pl-med2img.git
 
 
-.. image:: https://raw.githubusercontent.com/FNNDSC/cookiecutter-chrisapp/master/doc/assets/badge/light.png
-    :target: https://chrisstore.co
+Using python `.py` file
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Make sure that your current working directory is the one that contains the 3 directories: ``pl-med2img``, ``SAG-anon-nii``, and ``SAG-anon``
+
+
+**EXAMPLES:**
+
+**NIFTI volume:**
+
+Create a directory called ``image-results-nii`` in the current working directory.
+
+Run the ``med2img.py`` file using the following command to convert the NIfTI volume within the ``SAG-anon-nii`` directory to images:
+
+::
+
+    python3 pl-med2img/med2img/med2img.py           \
+        /SAG-anon-nii/ /image-results-nii/              \
+        -i SAG-anon.nii                                 \
+        -o sample.png
+
+**DICOM files:**
+
+Create a directory called ``image-results-dcm`` in the current working directory.
+
+Run the ``med2img.py`` file using the following command to convert the DICOM files within the ``SAG-anon`` directory to images:
+
+::
+
+    python3 pl-med2img/med2img/med2img.py                            \
+        /SAG-anon/ /image-results-dcm/                                   \ 
+        -i 0001-1.3.12.2.1107.5.2.19.45152.2013030808110258929186035.dcm \
+        -o sample.png
+
+Using ``docker run``
+^^^^^^^^^^^^^^^^^^^^
+**NOTE:** Make sure that your current working directory is the one that contains the 3 directories: ``pl-med2img``, ``SAG-anon-nii``, and ``SAG-anon``
+
+First, pull the docker image using the following command:
+
+::
+
+    docker pull fnndsc/pl-med2img .
+
+Now, to run the docker image, see the following examples:
+
+**EXAMPLES:**
+
+**NIFTI volume:**
+
+Run the docker image ``fnndsc/pl-med2img`` using the following command to convert the NIfTI files within the ``SAG-anon-nii`` directory to images:
+
+
+.. code-block:: bash
+
+    docker run --rm                                         \
+        -v $(pwd)/SAG-anon-nii/:/incoming                   \
+        -v $(pwd)/image-results-nii/:/outgoing              \
+        fnndsc/pl-med2img med2img.py                        \
+        -i SAG-anon.nii                                     \
+        -o sample.png                                       \
+         /incoming /outgoing
+
+**DICOM files:**
+
+Run the docker image ``fnndsc/pl-med2img`` using the following command to convert the DICOM files within the ``SAG-anon`` directory to images:
+
+.. code-block:: bash
+
+    docker run --rm                                                        \
+        -v $(pwd)/SAG-anon/:/incoming                                      \
+        -v $(pwd)/image-results-dcm/:/outgoing                             \
+        fnndsc/pl-med2img med2img.py                                       \
+        -i 0001-1.3.12.2.1107.5.2.19.45152.2013030808110258929186035.dcm   \
+        -o sample.png                                                      \
+         /incoming /outgoing
+
+The above NIfTI or DICOM examples will push a copy of each file/folder in the container's ``/incoming``
+storage. Some metadata files will be written to the container's ``/outgoing`` directory.
+
+Make sure that the host ``$(pwd)/SAG-anon-nii`` or ``$(pwd)/SAG-anon`` directory is world readable and ``$(pwd)/image-results-nii`` or ``$(pwd)/image-results``
+directory is world writable!
