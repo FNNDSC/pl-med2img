@@ -1,12 +1,21 @@
+<<<<<<< HEAD
 #!/usr/bin/env python                                            
 #
 # med2img ds ChRIS plugin app
 #
 # (c) 2021 Fetal-Neonatal Neuroimaging & Developmental Science Center
 #                   Boston Children's Hospital
+=======
+#                                                            _
 #
-#              http://childrenshospital.org/FNNDSC/
-#                        dev@babyMRI.org
+# (c) 2016-2021 Fetal-Neonatal Neuroimaging & Developmental Science Center
+#                    Boston Children's Hospital
+>>>>>>> fb8630e072c8955bec337bb2ba2bf4f01bf259a0
+#
+#               http://childrenshospital.org/FNNDSC/
+#                         dev@babyMRI.org
+#
+#   Thin plugin wrapper about a `med2image` module.
 #
 
 import  os
@@ -16,6 +25,7 @@ import  traceback
 import  pudb
 from    pydoc           import synopsis
 
+<<<<<<< HEAD
 from chrisapp.base import ChrisApp
 from    med2image       import med2image
 
@@ -67,6 +77,11 @@ where necessary.)
     DESCRIPTION
 
         `med2img.py` ...
+=======
+# import the Chris app superclass
+from    chrisapp.base   import ChrisApp
+from    med2image       import med2image
+>>>>>>> fb8630e072c8955bec337bb2ba2bf4f01bf259a0
 
     ARGS
 
@@ -97,6 +112,7 @@ class Med2img(ChrisApp):
     """
     An app to ...
     """
+<<<<<<< HEAD
     PACKAGE                 = __package__
     TITLE                   = 'A ChRIS plugin app'
     CATEGORY                = ''
@@ -122,6 +138,31 @@ class Med2img(ChrisApp):
     # The above dictionary is saved when plugin is called with a ``--saveoutputmeta``
     # flag. Note also that all file paths are relative to the system specified
     # output directory.
+=======
+    AUTHORS         = 'FNNDSC (dev@babyMRI.org)'
+    SELFPATH        = os.path.dirname(os.path.abspath(__file__))
+    SELFEXEC        = os.path.basename(__file__)
+    EXECSHELL       = 'python3'
+    TITLE           = 'Med2Img'
+    CATEGORY        = ''
+    TYPE            = 'ds'
+    DESCRIPTION     = 'A ChRIS DS app to convert from input medical image data files (NIfTI and DICOM) to png, jpg, etc ...'
+    DOCUMENTATION   = 'http://wiki'
+    LICENSE         = 'Opensource (MIT)'
+    VERSION         = '1.0.2'
+    MAX_NUMBER_OF_WORKERS = 1  # Override with integer value
+    MIN_NUMBER_OF_WORKERS = 1  # Override with integer value
+    MAX_CPU_LIMIT = ''  # Override with millicore value as string, e.g. '2000m'
+    MIN_CPU_LIMIT = ''  # Override with millicore value as string, e.g. '2000m'
+    MAX_MEMORY_LIMIT = ''  # Override with string, e.g. '1Gi', '2000Mi'
+    MIN_MEMORY_LIMIT = ''  # Override with string, e.g. '1Gi', '2000Mi'
+    MIN_GPU_LIMIT = 0  # Override with the minimum number of GPUs, as an integer, for your plugin
+    MAX_GPU_LIMIT = 0  # Override with the maximum number of GPUs, as an integer, for your plugin
+
+    # Fill out this with key-value output descriptive info (such as an output file path
+    # relative to the output dir) that you want to save to the output meta file when
+    # called with the --saveoutputmeta flag
+>>>>>>> fb8630e072c8955bec337bb2ba2bf4f01bf259a0
     OUTPUT_META_DICT = {}
 
     def define_parameters(self):
@@ -217,6 +258,7 @@ class Med2img(ChrisApp):
                             action      = 'store_true',
                             default     = False
                         )
+<<<<<<< HEAD
 
 
     def run(self, options):
@@ -259,6 +301,8 @@ class Med2img(ChrisApp):
 
         except Exception as e:
             traceback.print_exc()
+=======
+>>>>>>> fb8630e072c8955bec337bb2ba2bf4f01bf259a0
 
     def show_man_page(self, ab_shortOnly=False):
         """
@@ -283,6 +327,11 @@ class Med2img(ChrisApp):
                         [--reslice]                             \\
                         [-x|--man]                              \\
                         [-y|--synopsis]
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> fb8630e072c8955bec337bb2ba2bf4f01bf259a0
         ''' % scriptName
 
         description = '''
@@ -291,6 +340,10 @@ class Med2img(ChrisApp):
             display friendly format, such as jpg or png.
             Currently understands NIfTI and DICOM input formats.
         ARGS
+<<<<<<< HEAD
+=======
+
+>>>>>>> fb8630e072c8955bec337bb2ba2bf4f01bf259a0
             [-i|--inputFile <inputFile>]
             Input file to convert. Typically a DICOM file or a nifti volume.
 
@@ -386,3 +439,50 @@ class Med2img(ChrisApp):
             return shortSynopsis
         else:
             return shortSynopsis + description
+<<<<<<< HEAD
+=======
+
+    def run(self, options):
+        """
+        Define the code to be run by this plugin app.
+        """
+        try:
+            # The med2image module has slightly different variable
+            # names for the same concept... convert from the plugin
+            # name to the module name:
+            options.inputDir        = options.inputdir
+            options.outputDir       = options.outputdir
+
+            imgConverter = med2image.object_factoryCreate(options).C_convert
+
+            if options.version:
+                print("Version: %s" % options.version)
+                sys.exit(1)
+
+            if options.man or options.synopsis:
+                if options.man:
+                    str_help = self.show_man_page(False)
+                else:
+                    str_help = self.show_man_page(True)
+                print(str_help)
+                sys.exit(1)
+
+            if options.func:
+                imgConverter.func = options.func
+
+            imgConverter.tic()
+            imgConverter.run()
+
+            if options.printElapsedTime:
+                print("Elapsed time = %f seconds" % imgConverter.toc())
+                sys.exit(0)
+
+        except Exception as e:
+            traceback.print_exc()
+
+
+# ENTRYPOINT
+if __name__ == "__main__":
+    app = Med2ImgApp()
+    app.launch()
+>>>>>>> fb8630e072c8955bec337bb2ba2bf4f01bf259a0
