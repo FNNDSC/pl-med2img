@@ -6,12 +6,12 @@ with open(path.join(path.dirname(path.abspath(__file__)), 'README.rst')) as f:
 
 setup(
     name             = 'med2img',
-    version          = '0.1',
-    description      = 'An app to ...',
+    version          = '1.0.0',
+    description      = 'An app to convert medical MRI image data like DICOMs and NIFTI to readable formats like PNG/JPG',
     long_description = readme,
     author           = 'Arushi Vyas',
     author_email     = 'dev@babyMRI.org',
-    url              = 'http://wiki',
+    url              = 'https://github.com/FNNDSC/pl-med2img',
     packages         = ['med2img'],
     install_requires = ['chrisapp'],
     test_suite       = 'nose.collector',
