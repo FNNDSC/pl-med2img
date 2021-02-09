@@ -14,12 +14,9 @@
 import  os
 
 import  sys
-import  traceback
-import  pudb
-from    pydoc           import synopsis
 
-from chrisapp.base import ChrisApp
-from med2image       import med2image
+from chrisapp.base  import ChrisApp
+from med2image      import med2image
 
 Gstr_title = """
                     _  _____ _                 
@@ -228,39 +225,36 @@ class Med2img(ChrisApp):
         print(Gstr_title)
         print('Version: %s' % self.get_version())
 
-        try:
-            # The med2image module has slightly different variable
-            # names for the same concept... convert from the plugin
-            # name to the module name:
-            options.inputDir        = options.inputdir
-            options.outputDir       = options.outputdir
+        # The med2image module has slightly different variable
+        # names for the same concept... convert from the plugin
+        # name to the module name:
+        options.inputDir        = options.inputdir
+        options.outputDir       = options.outputdir
 
-            imgConverter = med2image.object_factoryCreate(options).C_convert
+        imgConverter = med2image.object_factoryCreate(options).C_convert
 
-            if options.version:
-                print("Version: %s" % options.version)
-                sys.exit(1)
+        if options.version:
+            print("Version: %s" % options.version)
+            sys.exit(1)
 
-            if options.man or options.synopsis:
-                if options.man:
-                    str_help = self.show_man_page(False)
-                else:
-                    str_help = self.show_man_page(True)
-                print(str_help)
-                sys.exit(1)
+        if options.man or options.synopsis:
+            if options.man:
+                str_help = self.show_man_page(False)
+            else:
+                str_help = self.show_man_page(True)
+            print(str_help)
+            sys.exit(1)
 
-            if options.func:
-                imgConverter.func = options.func
+        if options.func:
+            imgConverter.func = options.func
 
-            imgConverter.tic()
-            imgConverter.run()
+        imgConverter.tic()
+        imgConverter.run()
 
-            if options.printElapsedTime:
-                print("Elapsed time = %f seconds" % imgConverter.toc())
-                sys.exit(0)
+        if options.printElapsedTime:
+            print("Elapsed time = %f seconds" % imgConverter.toc())
+            sys.exit(0)
 
-        except Exception as e:
-            traceback.print_exc()
 
     def show_man_page(self, ab_shortOnly=False):
         """
