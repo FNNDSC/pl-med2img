@@ -14,13 +14,15 @@ name: ci
 on:
   push:
     # we have to guess what the name of the default branch is
-    branches: [ master, main, trunk ]
+    branches: [ master ]
     tags: [ '**' ]
   pull_request:
-    branches: [ master, main, trunk ]
+    branches: [ master ]
 
 jobs:
   test:
+    # testing suppressed, delete line below to enable testing
+    if: false
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -98,7 +100,7 @@ jobs:
           tags: |
             ${{ steps.determine.outputs.dock_image }}
             localhost:5000/${{ steps.determine.outputs.dock_image }}
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/ppc64le
           push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache

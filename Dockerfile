@@ -1,28 +1,14 @@
-# Docker file for med2img ChRIS plugin app
-#
-# Build with
-#
-#   docker build -t <name> .
-#
-# For example if building a local version, you could do:
-#
-#   docker build -t local/pl-med2img .
-#
-# In the case of a proxy (located at 192.168.13.14:3128), do:
-#
-#    docker build --build-arg http_proxy=http://192.168.13.14:3128 --build-arg UID=$UID -t local/pl-med2img .
-#
-# To run an interactive shell inside this container, do:
-#
-#   docker run -ti --entrypoint /bin/bash local/pl-med2img
-#
-# To pass an env var HOST_IP to container, do:
-#
-#   docker run -ti -e HOST_IP=$(ip route | grep -v docker | awk '{if(NF==11) print $9}') --entrypoint /bin/bash local/pl-med2img
-#
-
-FROM python:3.9.1-slim-buster
+FROM fnndsc/python:3.8.5-ubuntu20.04
 LABEL maintainer="Arushi Vyas <dev@babyMRI.org>"
+
+# Python libs which were originally mentioned in requirements.txt, but
+# don't seem to actually be used
+# python3-packaging python3-pygments python3-pyparsing python3-dateutil python3-six
+# python3-urwid python3-cycler python3-kiwisolver python3-pil
+# can also remove python3-matplotlib after it's removed from med2image
+RUN apt-get update \
+    && apt-get install -y python3-matplotlib python3-numpy python3-nibabel python3-pydicom \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/local/src
 
