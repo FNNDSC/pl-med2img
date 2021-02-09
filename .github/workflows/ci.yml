@@ -21,6 +21,8 @@ on:
 
 jobs:
   test:
+    # testing suppressed, delete line below to enable testing
+    if: false
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
