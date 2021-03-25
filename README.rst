@@ -124,7 +124,7 @@ Run the docker image ``fnndsc/pl-med2img`` using the following command to conver
     docker run --rm                                         \
         -v $(pwd)/SAG-anon-nii/:/incoming                   \
         -v $(pwd)/image-results-nii/:/outgoing              \
-        fnndsc/pl-med2img med2img.py                        \
+        fnndsc/pl-med2img med2img                           \
         -i SAG-anon.nii                                     \
         -o sample.png                                       \
          /incoming /outgoing
@@ -138,7 +138,7 @@ Run the docker image ``fnndsc/pl-med2img`` using the following command to conver
     docker run --rm                                                        \
         -v $(pwd)/SAG-anon/:/incoming                                      \
         -v $(pwd)/image-results-dcm/:/outgoing                             \
-        fnndsc/pl-med2img med2img.py                                       \
+        fnndsc/pl-med2img med2img                                          \
         -i 0001-1.3.12.2.1107.5.2.19.45152.2013030808110258929186035.dcm   \
         -o sample.png                                                      \
          /incoming /outgoing
