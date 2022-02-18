@@ -148,3 +148,18 @@ storage. Some metadata files will be written to the container's ``/outgoing`` di
 
 Make sure that the host ``$(pwd)/SAG-anon-nii`` or ``$(pwd)/SAG-anon`` directory is world readable and ``$(pwd)/image-results-nii`` or ``$(pwd)/image-results``
 directory is world writable!
+
+Development
+^^^^^^^^^^^
+
+To develop ``pl-med2img`` from within a containerized deployment, do
+
+.. code-block:: bash
+    docker run --rm -it                                                     \
+        -v $PWD/med2img:/usr/local/lib/python3.8/dist-packages/med2img:ro  \ 
+        -v $PWD/in:/incoming:ro -v $PWD/out:/outgoing:rw                    \
+        fnndsc/pl-med2img med2img                                           \
+        --inputFileSubStr "dcm" --sliceToConvert 0                          \
+        /incoming /outgoing
+
+*-30-*
