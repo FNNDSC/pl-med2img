@@ -31,19 +31,13 @@ Gstr_title = """
 
 Gstr_synopsis = """
 
-(Edit this in-line help for app specifics. At a minimum, the 
-flags below are supported -- in the case of DS apps, both
-positional arguments <inputDir> and <outputDir>; for FS apps
-only <outputDir> -- and similarly for <in> <out> directories
-where necessary.)
-
     NAME
 
-       med2img.py 
+       med2img 
 
     SYNOPSIS
 
-        python med2img.py                                         \\
+        med2img                                                         \\
             [-h] [--help]                                               \\
             [--json]                                                    \\
             [--man]                                                     \\
@@ -58,14 +52,17 @@ where necessary.)
 
         * Bare bones execution
 
-            docker run --rm -u $(id -u)                             \
-                -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing      \
-                fnndsc/pl-med2img med2img                        \
+            docker run --rm -u $(id -u)                                 \\
+                -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing          \\
+                fnndsc/pl-med2img med2img                               \\
                 /incoming /outgoing
 
     DESCRIPTION
 
-        `med2img.py` ...
+        The `med2img` plugin is a thin wrapper about a `med2image` module. 
+        This plugin is little more than a ChRIS DS-ified version about this
+        module and as serves as little more than a vehicle to expose the 
+        `med2image` CLI and run appropriately.
 
     ARGS
 
@@ -89,6 +86,88 @@ where necessary.)
         
         [--version]
         If specified, print version number and exit. 
+
+        [--inputFile <file>]
+        If specified, only process <file>.
+
+        [--inputFileSubStr <substr>]
+        As a convenience, the input file can be determined via a substring
+        search of all the files in the <inputDir> using this flag. The first
+        filename hit that contains the <substr> will be assigned the
+        <inputFile>.
+        
+        This flag is useful is input names are long and cumbersome, but
+        a short substring search would identify the file. For example, an
+        input file of
+        
+            0043-1.3.12.2.1107.5.2.19.45152.2013030808110149471485951.dcm
+        
+        can be specified using ``--inputFileSubStr 0043-``        
+
+        -o|--outputFileStem <outputFileStem>
+
+        The output file stem to store conversion. If this is specified
+        with an extension, this extension will be used to specify the
+        output file type.
+        
+        SPECIAL CASES:
+        
+        For DICOM data, the <outputFileStem> can be set to the value of
+        an internal DICOM tag. The tag is specified by preceding the tag
+        name with a percent character '%%', so
+        
+            -o %%ProtocolName
+        
+        will use the DICOM 'ProtocolName' to name the output file. Note
+        that special characters (like spaces) in the DICOM value are
+        replaced by underscores '_'.
+        
+        Multiple tags can be specified, for example
+        
+            -o %%PatientName%%PatientID%%ProtocolName
+        
+        and the output filename will have each DICOM tag string as
+        specified in order, connected with dashes.
+        
+        [--convertOnlySingleDICOM]
+        If specified, will only convert the single DICOM specified by the
+        '--inputFile' flag. This is useful for the case when an input
+        directory has many DICOMS but you specifially only want to convert
+        the named file. By default the script assumes that multiple DICOMS
+        should be converted en mass otherwise.
+        
+        [-t|--outputFileType <outputFileType>]
+        The output file type. If different to <outputFileStem> extension,
+        will override extension in favour of <outputFileType>.
+        
+        [-s|--sliceToConvert <sliceToConvert>]
+        In the case of volume files, the slice (z) index to convert. Ignored
+        for 2D input data. If a '-1' is sent, then convert *all* the slices.
+        If an 'm' is specified, only convert the middle slice in an input
+        volume.
+        
+        [-f|--frameToConvert <sliceToConvert>]
+        In the case of 4D volume files, the volume (V) containing the
+        slice (z) index to convert. Ignored for 3D input data. If a '-1' is
+        sent, then convert *all* the frames. If an 'm' is specified, only
+        convert the middle frame in the 4D input stack.
+        
+        [--showSlices]
+        If specified, render/show image slices as they are created.
+        
+        [--func <functionName>]
+        Apply the specified transformation function before saving. Currently
+        support functions:
+        
+            * invertIntensities
+              Inverts the contrast intensity of the source image.
+        
+        [--reslice]
+        For 3D data only. Assuming [i,j,k] coordinates, the default is to save
+        along the 'k' direction. By passing a --reslice image data in the 'i' and
+        'j' directions are also saved. Furthermore, the <outputDir> is subdivided into
+        'slice' (k), 'row' (i), and 'col' (j) subdirectories.
+
 """
 
 
@@ -225,8 +304,8 @@ class Med2img(ChrisApp):
         print(Gstr_title)
         print('Version: %s' % self.get_version())
         for k,v in options.__dict__.items():
-            print("%20s:  -->%s<--" % (k, v))
-            
+            print("%25s:  [%s]" % (k, v))
+        print("")    
         # The med2image module has slightly different variable
         # names for the same concept... convert from the plugin
         # name to the module name:
