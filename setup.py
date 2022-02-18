@@ -6,8 +6,8 @@ with open(path.join(path.dirname(path.abspath(__file__)), 'README.rst')) as f:
 
 setup(
     name             = 'med2img',
-    version          = '1.1.8',
-    description      = 'An app to convert medical MRI image data like DICOMs and NIFTI to readable formats like PNG/JPG',
+    version          = '1.1.10',
+    description      = 'An app to convert medical MRI image data like DICOMs and NIFTI to more standard image formats like PNG/JPG',
     long_description = readme,
     author           = 'Arushi Vyas',
     author_email     = 'dev@babyMRI.org',
