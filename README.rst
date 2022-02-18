@@ -155,6 +155,7 @@ Development
 To develop ``pl-med2img`` from within a containerized deployment, do
 
 .. code-block:: bash
+
     docker run --rm -it                                                     \
         -v $PWD/med2img:/usr/local/lib/python3.8/dist-packages/med2img:ro  \ 
         -v $PWD/in:/incoming:ro -v $PWD/out:/outgoing:rw                    \
