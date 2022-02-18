@@ -224,7 +224,9 @@ class Med2img(ChrisApp):
         """
         print(Gstr_title)
         print('Version: %s' % self.get_version())
-
+        for k,v in options.__dict__.items():
+            print("%20s:  -->%s<--" % (k, v))
+            
         # The med2image module has slightly different variable
         # names for the same concept... convert from the plugin
         # name to the module name:
